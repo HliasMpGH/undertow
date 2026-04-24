@@ -97,18 +97,27 @@ public class CookiesTestCase {
         Cookie cookie = cookies.get("CUSTOMER");
         Assert.assertEquals("CUSTOMER", cookie.getName());
         Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookies = Cookies.parseRequestCookies(1, false, Arrays.asList("; CUSTOMER=WILE_E_COYOTE"));
 
         cookie = cookies.get("CUSTOMER");
         Assert.assertEquals("CUSTOMER", cookie.getName());
         Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookies = Cookies.parseRequestCookies(1, false, Arrays.asList("foobar; CUSTOMER=WILE_E_COYOTE"));
 
         cookie = cookies.get("CUSTOMER");
         Assert.assertEquals("CUSTOMER", cookie.getName());
         Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
     }
     @Test
     public void testRequestCookieDomainPathVersion() {
@@ -136,6 +145,9 @@ public class CookiesTestCase {
         Cookie cookie = cookies.get("CUSTOMER");
         Assert.assertEquals("CUSTOMER", cookie.getName());
         Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookie = cookies.get("SHIPPING");
         Assert.assertEquals("SHIPPING", cookie.getName());
@@ -151,9 +163,32 @@ public class CookiesTestCase {
         Cookie cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
+    }
+
+    @Test
+    public void testGlobalVersion() {
+        Map<String, Cookie> cookies = Cookies.parseRequestCookies(2, false, Arrays.asList(
+            "$Version=1; CUSTOMER=WILE_E_COYOTE=THE_COYOTE; SHIPPING=FEDEX"
+        ));
+
+        Cookie cookie = cookies.get("CUSTOMER");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(1, cookie.getVersion()); // version should be applied to all cookies
+
+        cookie = cookies.get("SHIPPING");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(1, cookie.getVersion()); // version should be applied to all cookies
     }
 
     @Test
@@ -162,12 +197,21 @@ public class CookiesTestCase {
         Cookie cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("bar", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
     }
 
     @Test
@@ -176,6 +220,9 @@ public class CookiesTestCase {
         Cookie cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E_COYOTE=THE_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
     }
 
     @Test
@@ -185,9 +232,15 @@ public class CookiesTestCase {
         Cookie cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E_COYOTE=THE_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
     }
 
     @Test
@@ -197,9 +250,15 @@ public class CookiesTestCase {
         Cookie cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E_COYOTE=THE_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
     }
 
     @Test
@@ -209,9 +268,15 @@ public class CookiesTestCase {
         Cookie cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         //also make sure semi colon works as normal
         cookies = Cookies.parseRequestCookies(2, false, Arrays.asList("CUSTOMER=\"WILE_E_COYOTE\"; SHIPPING=FEDEX" ), true);
@@ -219,18 +284,30 @@ public class CookiesTestCase {
         cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookies = Cookies.parseRequestCookies(5, false, Arrays.asList("CUSTOMER=\"WILE_E_COYOTE\", BAD_CUSTOMER=\"APPLE\"  IGNORED=PART, SHIPPING=FEDEX" ), true);
         Assert.assertEquals(2, cookies.size());
         cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
     }
 
@@ -272,36 +349,60 @@ public class CookiesTestCase {
         Cookie cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookies = Cookies.parseRequestCookies(2, false, Arrays.asList("CUSTOMER=WILE_E COYOTE; SHIPPING=FEDEX" ), true, true);
         Assert.assertEquals(2, cookies.size());
         cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookies = Cookies.parseRequestCookies(2, false, Arrays.asList("CUSTOMER=WILE_E_COYOTE\"; SHIPPING=FEDEX" ), true, false);
         Assert.assertEquals(2, cookies.size());
         cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookies = Cookies.parseRequestCookies(2, false, Arrays.asList("CUSTOMER=WILE_E_COYOTE\"; SHIPPING=FEDEX" ), true, true);
         Assert.assertEquals(2, cookies.size());
         cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E_COYOTE\"", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
     }
 
     @Test
@@ -316,48 +417,84 @@ public class CookiesTestCase {
         Cookie cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("JSESSIONID");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WCGWBPJ8DUmv0fvREqVQZb8E6bzW92iHnzysV_q_.master:node1", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookies = Cookies.parseRequestCookies(3, false, Arrays.asList("JSESSIONID=WCGWBPJ8DUmv0fvREqVQZb8E6bzW92iHnzysV_q_.master:node1; CUSTOMER=WILE_E COYOTE; SHIPPING=FEDEX" ), true, true);
         Assert.assertEquals(3, cookies.size());
         cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("JSESSIONID");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WCGWBPJ8DUmv0fvREqVQZb8E6bzW92iHnzysV_q_.master:node1", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookies = Cookies.parseRequestCookies(3, false, Arrays.asList("JSESSIONID=WCGWBPJ8DUmv0fvREqVQZb8E6bzW92iHnzysV_q_.master:node1; CUSTOMER=WILE_E_COYOTE\"; SHIPPING=FEDEX" ), true, false);
         Assert.assertEquals(3, cookies.size());
         cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("JSESSIONID");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WCGWBPJ8DUmv0fvREqVQZb8E6bzW92iHnzysV_q_.master:node1", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookies = Cookies.parseRequestCookies(3, false, Arrays.asList("JSESSIONID=WCGWBPJ8DUmv0fvREqVQZb8E6bzW92iHnzysV_q_.master:node1; CUSTOMER=WILE_E_COYOTE\"; SHIPPING=FEDEX" ), true, true);
         Assert.assertEquals(3, cookies.size());
         cookie = cookies.get("CUSTOMER");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WILE_E_COYOTE\"", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("SHIPPING");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
         cookie = cookies.get("JSESSIONID");
         Assert.assertNotNull(cookie);
         Assert.assertEquals("WCGWBPJ8DUmv0fvREqVQZb8E6bzW92iHnzysV_q_.master:node1", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
     }
 
     @Test
@@ -369,16 +506,23 @@ public class CookiesTestCase {
         Cookie cookie = cookies.get("Customer");
         Assert.assertEquals("Customer", cookie.getName());
         Assert.assertEquals("WILE_\"E_\"COYOTE", cookie.getValue()); // backslash escapled double quotes in the value
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookie = cookies.get("SHIPPING");
         Assert.assertEquals("SHIPPING", cookie.getName());
         Assert.assertEquals("FEDEX\\\\", cookie.getValue()); // backslash escapled backslash in the value
         Assert.assertEquals("/acme", cookie.getPath());
         Assert.assertEquals(1, cookie.getVersion());
+        Assert.assertNull(cookie.getDomain()); // No domain applied
 
         cookie = cookies.get("foo");
         Assert.assertEquals("foo", cookie.getName());
         Assert.assertEquals("\\", cookie.getValue()); // unescaped backslash exists at the last of the value
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
     }
 
     @Test
@@ -393,6 +537,9 @@ public class CookiesTestCase {
         Assert.assertEquals("CUSTOMER", cookie.getName());
         Assert.assertEquals("{\"v1\":1, \"id\":\"some_unique_id\", \"c\":\"http://www.google.com?q=love me\"}",
                cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookie = cookies.get("SHIPPING");
         Assert.assertEquals("SHIPPING", cookie.getName());
@@ -414,6 +561,9 @@ public class CookiesTestCase {
         Assert.assertEquals("CUSTOMER", cookie.getName());
         Assert.assertEquals("{\"v1\":1, \"id\":\"some_unique_id\", \"c\":\"http://www.google.com?q=love me\"}",
                cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookie = cookies.get("SHIPPING");
         Assert.assertEquals("SHIPPING", cookie.getName());
@@ -442,6 +592,9 @@ public class CookiesTestCase {
                 + "\"sales\" : [ { \"firstName\" : \"Sally\", \"lastName\" : \"Green\", \"age\" : 27 }, "
                 + "{ \"firstName\" : \"Jim\", \"lastName\" : \"Galley\", \"age\" : 41 } ] }",
                cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
+        Assert.assertNull(cookie.getPath()); // No path applied
 
         cookie = cookies.get("SHIPPING");
         Assert.assertEquals("SHIPPING", cookie.getName());
@@ -491,12 +644,14 @@ public class CookiesTestCase {
         Cookie cookie = cookies.get("CUSTOMER");
         Assert.assertEquals("CUSTOMER", cookie.getName());
         Assert.assertEquals("WILE_E_COYOTE", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
         cookie = cookies.get("BAD");
         Assert.assertNull(cookie);
         cookie = cookies.get("SHIPPING");
+        Assert.assertNotNull(cookie);
         Assert.assertEquals("SHIPPING", cookie.getName());
         Assert.assertEquals("FEDEX", cookie.getValue());
-        Assert.assertNotNull(cookie);
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
     }
 
     // RFC6265 allows US-ASCII characters excluding CTLs, whitespace,
@@ -565,9 +720,11 @@ public class CookiesTestCase {
         List<Cookie> lst = parsedCookies.get("CUSTOMER");
         Assert.assertEquals(1, lst.size());
         Cookie cookie = lst.get(0);
-        Assert.assertEquals(null, cookie.getPath());
+        Assert.assertNull(cookie.getPath());
         Assert.assertEquals("CUSTOMER", cookie.getName());
         Assert.assertEquals("MONICA", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+        Assert.assertNull(cookie.getDomain()); // No domain applied
     }
 
     @Test
@@ -593,9 +750,102 @@ public class CookiesTestCase {
         lst = parsedCookies.get("NO");
         Assert.assertEquals(1, lst.size());
         cookie = lst.get(0);
+        Assert.assertEquals(1, cookie.getVersion()); // Global version applies
         Assert.assertEquals(null, cookie.getPath());
         Assert.assertEquals(null, cookie.getDomain());
         Assert.assertEquals("NO", cookie.getName());
         Assert.assertEquals("META", cookie.getValue());
+    }
+
+    @Test
+    public void testPathDomainAtStartIgnored() {
+        // RFC 2109: $Path and $Domain at start (no previous cookie) should be ignored per non-strict grammar
+        Map<String, Cookie> cookies = Cookies.parseRequestCookies(3, false, Arrays.asList(
+            "$Path=/test; $Domain=example.com; CUSTOMER=WILE; SHIPPING=FEDEX"
+        ));
+
+        Cookie cookie = cookies.get("CUSTOMER");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals("WILE", cookie.getValue());
+        Assert.assertNull(cookie.getPath()); // $Path at start should be ignored
+        Assert.assertNull(cookie.getDomain()); // $Domain at start should be ignored
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+
+        cookie = cookies.get("SHIPPING");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals("FEDEX", cookie.getValue());
+        Assert.assertNull(cookie.getPath()); // Subsequent cookies also unaffected
+        Assert.assertNull(cookie.getDomain());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+    }
+
+    @Test
+    public void testMultipleVersionOverrides() {
+        // RFC 2109: Multiple $Version in middle - each applies to next cookie only
+        Map<String, Cookie> cookies = Cookies.parseRequestCookies(4, false, Arrays.asList(
+            "COOKIE1=VAL1; $Version=1; COOKIE2=VAL2; $Version=2; COOKIE3=VAL3"
+        ));
+
+        Cookie cookie = cookies.get("COOKIE1");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals("VAL1", cookie.getValue());
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+
+        cookie = cookies.get("COOKIE2");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals("VAL2", cookie.getValue());
+        Assert.assertEquals(1, cookie.getVersion()); // $Version=1 in middle applies to next cookie
+
+        cookie = cookies.get("COOKIE3");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals("VAL3", cookie.getValue());
+        Assert.assertEquals(2, cookie.getVersion()); // $Version=2 in middle applies to next cookie
+    }
+
+    @Test
+    public void testGlobalVersionPersistsAfterOverride() {
+        // RFC 2109: Global version should persist after a per-cookie override
+
+        // maybe we should not allow multiple versions (or maybe not allow conflicts - RFC2901 groups multiple version=1 in the start)?
+        Map<String, Cookie> cookies = Cookies.parseRequestCookies(4, false, Arrays.asList(
+            "$Version=1; COOKIE1=VAL1; $Version=2; COOKIE2=VAL2; COOKIE3=VAL3"
+        ));
+
+        Cookie cookie = cookies.get("COOKIE1");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals("VAL1", cookie.getValue());
+        Assert.assertEquals(1, cookie.getVersion()); // Global version
+
+        cookie = cookies.get("COOKIE2");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals("VAL2", cookie.getValue());
+        Assert.assertEquals(2, cookie.getVersion()); // Overridden by $Version in middle
+
+        cookie = cookies.get("COOKIE3");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals("VAL3", cookie.getValue());
+        Assert.assertEquals(1, cookie.getVersion()); // Back to global version
+    }
+
+    @Test
+    public void testPathDomainOnlyApplyBackward() {
+        // RFC 2109: $Path and $Domain apply only to preceding cookie, not subsequent ones
+        Map<String, Cookie> cookies = Cookies.parseRequestCookies(3, false, Arrays.asList(
+            "COOKIE1=VAL1; $Path=/test; $Domain=example.com; COOKIE2=VAL2"
+        ));
+
+        Cookie cookie = cookies.get("COOKIE1");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals("VAL1", cookie.getValue());
+        Assert.assertEquals("/test", cookie.getPath()); // $Path applies to COOKIE1
+        Assert.assertEquals("example.com", cookie.getDomain()); // $Domain applies to COOKIE1
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
+
+        cookie = cookies.get("COOKIE2");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals("VAL2", cookie.getValue());
+        Assert.assertNull(cookie.getPath()); // $Path does NOT apply forward to COOKIE2
+        Assert.assertNull(cookie.getDomain()); // $Domain does NOT apply forward to COOKIE2
+        Assert.assertEquals(0, cookie.getVersion()); // No version applied (default is 0)
     }
 }
