@@ -459,8 +459,18 @@ public class Cookies {
 
         if (!cookieJar.name.isEmpty() && cookieJar.name.charAt(0) == '$') {
             if(cookieJar.name.equals(VERSION)) {
-                cookieJar.version = Integer.parseInt(value);
-                //Theoretically this should happen only once at the start
+                int parsedVersion = Integer.parseInt(value);
+                // RFC 2109:
+                // - If $Version is at the start (no cookies seen yet), it applies to ALL subsequent cookies
+                // - If $Version is in the middle (after cookies), it applies only to the NEXT cookie
+                if (cookieJar.parsedCookies.isEmpty() && cookieJar.currentCookie == null) {
+                    // $Version at the start - applies globally to all cookies
+                    cookieJar.version = parsedVersion;
+                } else {
+                    // $Version in the middle - applies only to the next cookie
+                    cookieJar.nextCookieVersion = parsedVersion;
+                }
+                // Theoretically this should happen only once at the start
                 applyAdditional(cookieJar, cookieJar.name, value);
             } else if(cookieJar.currentCookie != null) {
                 applyAdditional(cookieJar, cookieJar.name, value);
@@ -469,6 +479,15 @@ public class Cookies {
         } else {
             storeCookie(cookieJar);
             cookieJar.currentCookie = new CookieImpl(cookieJar.name, value);
+            // RFC 2109: Apply version based on scope
+            // 1. If nextCookieVersion is set (from $Version in the middle), use it for this cookie only
+            // 2. Otherwise, use global version (from $Version at the start)
+            if (cookieJar.nextCookieVersion != -1) {
+                cookieJar.currentCookie.setVersion(cookieJar.nextCookieVersion);
+                cookieJar.nextCookieVersion = -1; // Reset - only applies to one cookie
+            } else if (cookieJar.version != -1) {
+                cookieJar.currentCookie.setVersion(cookieJar.version);
+            }
             cookieJar.name = null;
             return;
         }
@@ -480,20 +499,17 @@ public class Cookies {
             Cookie c = new CookieImpl(name, value);
             cookieJar.parsedCookies.add(c);
         }
-        if (cookieJar.version == 1) {
-            // rfc2109 - add metadata to
-            if (cookieJar.currentCookie != null) {
-                cookieJar.currentCookie.setVersion(cookieJar.version);
+        // RFC 2109: Apply $Path and $Domain to the current cookie
+        // Note: We don't apply $Version here - that's handled in createCookie to apply to the NEXT cookie, not the current one
+        if (cookieJar.currentCookie != null) {
+            if (name.equals(DOMAIN)) {
+                cookieJar.currentCookie.setDomain(value);
+                return;
+            }
 
-                if (name.equals(DOMAIN)) {
-                    cookieJar.currentCookie.setDomain(value);
-                    return;
-                }
-
-                if (name.equals(PATH)) {
-                    cookieJar.currentCookie.setPath(value);
-                    return;
-                }
+            if (name.equals(PATH)) {
+                cookieJar.currentCookie.setPath(value);
+                return;
             }
         }
         return;
@@ -603,7 +619,8 @@ public class Cookies {
         //Currently parsed cookie, if V1, all $ will be applied to it, until
         CookieImpl currentCookie;
         int maxCookies;
-        int version = -1;
+        int version = -1; // Global version (from $Version at the start)
+        int nextCookieVersion = -1; // Version for the next cookie only (from $Version in the middle)
         boolean inQuotes = false;
         boolean containsEscapedQuotes = false;
         int state = 0;
