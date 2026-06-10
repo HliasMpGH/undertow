@@ -175,7 +175,7 @@ final class AjpServerResponseConduit extends AbstractFramedStreamSinkConduit {
      *
      * No attempt is made to actually flush this, so a gathering write can be used to actually flush the data
      */
-    private void processAJPHeader() {
+    private void processAJPHeader() throws IOException {
         int oldState = this.state;
         if (anyAreSet(oldState, FLAG_START)) {
 
@@ -211,7 +211,6 @@ final class AjpServerResponseConduit extends AbstractFramedStreamSinkConduit {
 
             putInt(buffer, headers);
 
-
             for (final HttpString header : responseHeaders.getHeaderNames()) {
                 for (String headerValue : responseHeaders.get(header)) {
                     if(buffer.remaining() < header.length() + headerValue.length() + 6) {
@@ -234,9 +233,23 @@ final class AjpServerResponseConduit extends AbstractFramedStreamSinkConduit {
                     if (headerCode != null) {
                         putInt(buffer, headerCode);
                     } else {
-                        putHttpString(buffer, header);
+                        // even though we might have already flipped the buffer,
+                        // a BufferOverflowException is still possible for large header values/names
+                        // so we should check again
+                        if (header.length() < buffer.remaining()) {
+                            putHttpString(buffer, header);
+                        } else {
+                            throw UndertowMessages.MESSAGES.responseHeaderNameTooLargeForBuffer(header.length());
+                        }
                     }
-                    putString(buffer, headerValue);
+                    // even though we might have already flipped the buffer,
+                    // a BufferOverflowException is still possible for large header values/names
+                    // so we should check again
+                    if (headerValue.length() < buffer.remaining()) {
+                        putString(buffer, headerValue);
+                    } else {
+                        throw UndertowMessages.MESSAGES.responseHeaderValueTooLargeForBuffer(headerValue.length());
+                    }
                 }
             }
             if(byteBuffers == null) {
@@ -262,7 +275,7 @@ final class AjpServerResponseConduit extends AbstractFramedStreamSinkConduit {
 
 
     @Override
-    protected void queueCloseFrames() {
+    protected void queueCloseFrames() throws IOException {
         processAJPHeader();
         final ByteBuffer buffer = exchange.isPersistent() ? CLOSE_FRAME_PERSISTENT.duplicate() : CLOSE_FRAME_NON_PERSISTENT.duplicate();
         queueFrame(null, buffer);
